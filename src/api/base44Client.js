@@ -1,8 +1,34 @@
-import { createClient } from '@base44/sdk';
-// import { getAccessToken } from '@base44/sdk/utils/auth-utils';
+// src/api/base44Client.js
+// Local stub so Buyerscouter runs without Base44 backend or redirects.
 
-// Create a client with authentication required
-export const base44 = createClient({
-  appId: "6938b756db6701840a3bbf0c", 
-  requiresAuth: false // Ensure authentication is required for all operations
-});
+export const base44 = {
+  // Fake entity() API that returns a dummy in-memory collection
+  entity() {
+    const data = [];
+
+    return {
+      async list() {
+        // Always return empty array for now
+        return data;
+      },
+      async get(id) {
+        return data.find(item => item.id === id) || null;
+      },
+      async create(item) {
+        data.push(item);
+        return item;
+      },
+      async update(id, updates) {
+        const idx = data.findIndex(item => item.id === id);
+        if (idx === -1) return null;
+        data[idx] = { ...data[idx], ...updates };
+        return data[idx];
+      },
+      async delete(id) {
+        const idx = data.findIndex(item => item.id === id);
+        if (idx === -1) return;
+        data.splice(idx, 1);
+      }
+    };
+  }
+};
